@@ -2,13 +2,13 @@ package main
 
 import (
 	"bytes"
-	"crypto/tls"
-	"crypto/x509"
+	// "crypto/tls"
+	// "crypto/x509"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
+	// "io/ioutil"
 	"log"
 	"net"
 	"net/http"
@@ -40,7 +40,7 @@ var (
 )
 
 func init() {
-	flag.StringVar(&port, "port", "80", "give me a port number")
+	flag.StringVar(&port, "port", "8585", "give me a port number")
 	flag.StringVar(&name, "name", os.Getenv("WHOAMI_NAME"), "give me a name")
 }
 
@@ -65,36 +65,36 @@ func main() {
 		Addr: ":" + port,
 	}
 
-	_, err := os.Stat("/cert/cert.pem")
-	if err != nil {
-		log.Fatal("You need to provide a certificate")
-	}
+	// _, err := os.Stat("/cert/cert.pem")
+	// if err != nil {
+	// 	log.Fatal("You need to provide a certificate")
+	// }
 
-	_, err = os.Stat("/cert/key.pem")
-	if err != nil {
-		log.Fatal("You need to provide a certificate")
-	}
-	log.Fatal(server.ListenAndServeTLS("/cert/cert.pem", "/cert/key.pem"))
+	// _, err = os.Stat("/cert/key.pem")
+	// if err != nil {
+	// 	log.Fatal("You need to provide a certificate")
+	// }
+	log.Fatal(server.ListenAndServe())
 }
 
-func setupMutualTLS(ca string) *tls.Config {
-	clientCACert, err := ioutil.ReadFile(ca)
-	if err != nil {
-		log.Fatal(err)
-	}
+// func setupMutualTLS(ca string) *tls.Config {
+// 	clientCACert, err := ioutil.ReadFile(ca)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
 
-	clientCertPool := x509.NewCertPool()
-	clientCertPool.AppendCertsFromPEM(clientCACert)
+// 	clientCertPool := x509.NewCertPool()
+// 	clientCertPool.AppendCertsFromPEM(clientCACert)
 
-	tlsConfig := &tls.Config{
-		ClientAuth:               tls.RequireAndVerifyClientCert,
-		ClientCAs:                clientCertPool,
-		PreferServerCipherSuites: true,
-		MinVersion:               tls.VersionTLS12,
-	}
+// 	tlsConfig := &tls.Config{
+// 		ClientAuth:               tls.RequireAndVerifyClientCert,
+// 		ClientCAs:                clientCertPool,
+// 		PreferServerCipherSuites: true,
+// 		MinVersion:               tls.VersionTLS12,
+// 	}
 
-	return tlsConfig
-}
+// 	return tlsConfig
+// }
 
 func benchHandler(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Connection", "keep-alive")
