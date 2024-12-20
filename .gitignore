@@ -1,0 +1,7 @@
+config.yaml
+auth-middleware.yaml
+cache/
+*.log
+*.tmp
+# System files
+.DS_Store

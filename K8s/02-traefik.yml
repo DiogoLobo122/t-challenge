@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: traefik-deployment
+  labels:
+    app: traefik
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: traefik
+  template:
+    metadata:
+      labels:
+        app: traefik
+    spec:
+      serviceAccountName: traefik-account
+      containers:
+        - name: traefik
+          image: traefik:v3.2
+          args:
+            - --api.insecure
+            - --providers.kubernetesingress
+            - --providers.kubernetescrd
+            - --entrypoints.web.address=:80
+            - --entrypoints.websecure.address=:443
+            - --entryPoints.web.http.redirections.entryPoint.scheme=https
+            - --certificatesresolvers.traefik-le.acme.email=diogoinfraops@gmail.com
+            - --certificatesresolvers.traefik-le.acme.storage=/etc/traefik/acme/acme.json
+            - --certificatesresolvers.traefik-le.acme.httpchallenge.entrypoint=web
+          ports:
+            - name: web
+              containerPort: 80
+            - name: websecure
+              containerPort: 443
+            - name: dashboard
+              containerPort: 8080
+          volumeMounts:
+            - name: acme-storage
+              mountPath: /etc/traefik/acme
+      volumes:
+        - name: acme-storage
+          persistentVolumeClaim:
+            claimName: acme-pvc

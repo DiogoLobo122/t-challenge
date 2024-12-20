@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: whoami-deployment
+  labels:
+    app: whoami
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: whoami
+  template:
+    metadata:
+      labels:
+        app: whoami
+    spec:
+      serviceAccountName: traefik-account
+      containers:
+        - name: whoami
+          image: docker.io/digodigo/projects:foobar-api-v2
+          ports:
+            - name: web
+              containerPort: 8585
+          env:
+            - name: WHOAMI_NAME
+              value: "foobar"
+
